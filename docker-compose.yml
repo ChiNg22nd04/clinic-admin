@@ -1,10 +1,33 @@
-version: "3.8"
+# version: "3.8"
 
+# services:
+#     directus:
+#         image: directus/directus:latest
+#         # Build image từ Dockerfile
+#         build: .
+#         ports:
+#             - 8055:8055
+#         environment:
+#             KEY: ${KEY}
+#             SECRET: ${SECRET}
+#             DB_CLIENT: ${DB_CLIENT}
+#             DB_HOST: ${DB_HOST}
+#             DB_PORT: ${DB_PORT}
+#             DB_DATABASE: ${DB_DATABASE}
+#             DB_USER: ${DB_USER}
+#             DB_PASSWORD: ${DB_PASSWORD}
+#             ADMIN_EMAIL: ${ADMIN_EMAIL}
+#             ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+#         volumes:
+#             - directus_data:/directus
+
+# volumes:
+#     directus_data:
+
+version: "3.9"
 services:
     directus:
         image: directus/directus:latest
-        # Build image từ Dockerfile
-        build: .
         ports:
             - 8055:8055
         environment:
@@ -14,12 +37,23 @@ services:
             DB_HOST: ${DB_HOST}
             DB_PORT: ${DB_PORT}
             DB_DATABASE: ${DB_DATABASE}
-            DB_USER: ${DB_USER}
-            DB_PASSWORD: ${DB_PASSWORD}
             ADMIN_EMAIL: ${ADMIN_EMAIL}
             ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+            DB_USER: ${DB_USER}
+            DB_PASSWORD: ${DB_PASSWORD}
         volumes:
-            - directus_data:/directus
+            - directus_data:/data
+
+    node-api:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - 5001:5000
+        environment:
+            DIRECTUS_URL: http://directus:8055
+        depends_on:
+            - directus
 
 volumes:
     directus_data:
